@@ -20,17 +20,22 @@ import ing.wbaa.druid.query._
 
 trait FeedElementBuilder[T] {
 
+  /**
+    *
+    * @return Map[String, T] the keys in the map can be used in a Gatling feeder by getting the corresponding values
+    *         out of the Gatling Session
+    */
   def toFeedElement : Map[String, T]
 }
 
-trait DruidQueryFeeder[Q, D, T] {
+private[druid] trait DruidQueryFeeder[Q, D, T] {
 
   def exec(query: DruidQuery[Q], transform: (D) => Map[String, T])
           (implicit mf: Manifest[List[Q]]): Seq[Map[String, T]]
 
 }
 
-trait DruidTimeSeriesQueryFeedExecutor[D, T] {
+private[druid] trait DruidTimeSeriesQueryFeedExecutor[D, T] {
   type TimeSeriesResultFeedBuilder[B <: FeedElementBuilder[T]] = TimeSeriesResult[B]
 
   def exec[P <: FeedElementBuilder[T]](query: DruidQuery[TimeSeriesResultFeedBuilder[P]])
@@ -38,7 +43,7 @@ trait DruidTimeSeriesQueryFeedExecutor[D, T] {
 
 }
 
-trait DruidTopNQueryFeedExecutor[D, T] {
+private[druid] trait DruidTopNQueryFeedExecutor[D, T] {
   type TopNResultFeedBuilder[B <: FeedElementBuilder[T]] = TopNResult[B]
 
   def exec[P <: FeedElementBuilder[T]](query: DruidQuery[TopNResultFeedBuilder[P]])
@@ -46,7 +51,7 @@ trait DruidTopNQueryFeedExecutor[D, T] {
 
 }
 
-trait DruidGroupByQueryFeedExecutor[D, T] {
+private[druid] trait DruidGroupByQueryFeedExecutor[D, T] {
   type GroupByQueryResultFeedBuilder[B <: FeedElementBuilder[T]] = GroupByQueryResult[B]
 
   def exec[P <: FeedElementBuilder[T]](query: DruidQuery[GroupByQueryResultFeedBuilder[P]])

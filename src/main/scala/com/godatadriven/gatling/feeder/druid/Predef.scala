@@ -20,6 +20,12 @@ import io.gatling.core.feeder.RecordSeqFeederBuilder
 
 object Predef {
 
+  /**
+    *
+    * @param feeder The Sequence of Map[String, T] elements that needs to be turned into a RecordSeqFeederBuilder[T]
+    * @tparam T type of the elements that the feeder considers the values
+    * @return
+    */
   def druidFeeder[T](feeder: Seq[Map[String, T]]) : RecordSeqFeederBuilder[T] =
     RecordSeqFeederBuilder[T](feeder.toIndexedSeq)
 }

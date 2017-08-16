@@ -23,7 +23,7 @@ import scala.language.postfixOps
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class DruidTopNQueryFeeder[D, T] extends DruidQueryFeeder[TopNResult[D], D, T] with DruidTopNQueryFeedExecutor[D, T] {
+private[druid] class DruidTopNQueryFeeder[D, T] extends DruidQueryFeeder[TopNResult[D], D, T] with DruidTopNQueryFeedExecutor[D, T] {
 
   override def exec[P <: FeedElementBuilder[T]](query: DruidQuery[TopNResultFeedBuilder[P]])
                                                (
@@ -45,13 +45,38 @@ class DruidTopNQueryFeeder[D, T] extends DruidQueryFeeder[TopNResult[D], D, T] w
 
 }
 
+/**
+  * DruidTopNQueryFeeder companion object for easy DruidFeeder creation
+  */
 object DruidTopNQueryFeeder {
+  /**
+    * DruidTopNQueryFeeder creation method that can handle straight case classes and knows how to convert them into
+    *   a Gatling feeder.Record[T] (also known as a Map[String, T])
+    *
+    * @param query a Druid TopN Query to request data
+    * @param transform function to convert the D case class type to a Map[String, T]
+    * @param mf implicit Manifest needed by the scruid library to translate the druid result to a case class
+    * @tparam D case class type to which the druid query result can be converted to
+    * @tparam T value type of the resulting Map elements
+    * @return A Sequence of Map[String, T] that can be used in a Gatling feeder
+    */
   def apply[D, T](query: DruidQuery[TopNResult[D]],
                   transform: (D) => Map[String, T]
                  )(implicit mf: Manifest[List[TopNResult[D]]]): Seq[Map[String, T]] = {
     new DruidTopNQueryFeeder[D, T]().exec(query, transform)(mf = mf)
   }
 
+  /**
+    * DruidTopNQueryFeeder creation method that can handle straight case classes that extend FeedElementBuilder[T] where
+    *   the toFeedElement method is used to convert the class into a Gatling feeder.Record[T]
+    *   (also known as a Map[String, T])
+    *
+    * @param query a Druid TopN Query to request data
+    * @param mf implicit Manifest needed by the scruid library to translate the druid result to a case class
+    * @tparam D case class type to which the druid query result can be converted to
+    * @tparam T value type of the resulting Map elements
+    * @return A Sequence of Map[String, T] that can be used in a Gatling feeder
+    */
   def apply[D <: FeedElementBuilder[T], T](query: DruidQuery[TopNResult[D]])
                                           (implicit mf: Manifest[List[TopNResult[D]]]): Seq[Map[String, T]] = {
     new DruidTopNQueryFeeder[D, T]().exec(query)(mf = mf)

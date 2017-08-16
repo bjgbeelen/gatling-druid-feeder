@@ -59,7 +59,7 @@ case class TimeseriesCountWithFeedElementBuilder(count: Int)
     override def toFeedElement = Map("counter" -> count)
 }
 
-val timeSeriesQuery2 = TimeSeriesQuery[TimeseriesCountWithFeedElementBuilder](
+val timeSeriesQuery = TimeSeriesQuery[TimeseriesCountWithFeedElementBuilder](
     aggregations = List(
       Aggregation(
         kind = "count",
@@ -73,7 +73,7 @@ val timeSeriesQuery2 = TimeSeriesQuery[TimeseriesCountWithFeedElementBuilder](
 
 val feeder: Seq[Map[String, Int]] = 
 DruidTimeSeriesQueryFeeder[TimeseriesCountWithFeedElementBuilder, Int](
-  timeSeriesQuery2
+  timeSeriesQuery
 )
 
 import io.gatling.core.Predef._
