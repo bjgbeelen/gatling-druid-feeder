@@ -2,6 +2,8 @@
  * Plugins
  */
 
+useGpg := true
+
 lazy val unusedWarnings = Seq("-Ywarn-unused-import", "-Ywarn-unused")
 
 lazy val commonSettings: Seq[Setting[_]] = Seq(
@@ -21,6 +23,14 @@ lazy val commonSettings: Seq[Setting[_]] = Seq(
   ),
   publishMavenStyle in ThisBuild := true,
   pomIncludeRepository in ThisBuild := { _ => false },
+  credentials in ThisBuild += Credentials(Path.userHome / ".sbt" / "gpg.credentials"),
+  // Add sonatype repository settings
+  publishTo in ThisBuild := Some(
+    if (isSnapshot.value)
+      Opts.resolver.sonatypeSnapshots
+    else
+      Opts.resolver.sonatypeStaging
+    ),
   crossScalaVersions in ThisBuild := Seq("2.12.3"),
   scalaVersion in ThisBuild := "2.12.3",
   scalacOptions ++= Seq(Opts.compile.deprecation, "-Xlint", "-feature"),
@@ -38,7 +48,7 @@ lazy val root = (project in file("."))
     name := "druid-feeder",
     organization := "com.godatadriven.gatling",
     organizationName := "GoDataDriven",
-    version := "0.1-SNAPSHOT",
+    version := "0.1.0",
     /*
      * Dependencies
      */
