@@ -23,7 +23,6 @@ lazy val commonSettings: Seq[Setting[_]] = Seq(
   ),
   publishMavenStyle in ThisBuild := true,
   pomIncludeRepository in ThisBuild := { _ => false },
-  credentials in ThisBuild += Credentials(Path.userHome / ".sbt" / "gpg.credentials"),
   // Add sonatype repository settings
   publishTo in ThisBuild := Some(
     if (isSnapshot.value)
@@ -48,7 +47,7 @@ lazy val root = (project in file("."))
     name := "druid-feeder",
     organization := "com.godatadriven.gatling",
     organizationName := "GoDataDriven",
-    version := "0.1.0",
+    version := "0.2.0-SNAPSHOT",
     /*
      * Dependencies
      */

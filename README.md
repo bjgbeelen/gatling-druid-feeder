@@ -82,3 +82,59 @@ import com.godatadriven.gatling.feeder.druid.Predef._
 feed(druidFeeder[Int](feeder).circular)
 
 ```
+
+## How to build
+
+### Testing
+
+Test need a druid docker container running. The command for that is:
+```bash
+docker run --rm -i -p 8082:8082 -p 8081:8081 fokkodriesprong/docker-druid
+```
+This is the same docker image used for testing the scruid library
+
+Testing can be run with:
+```bash
+sbt test
+```
+
+### Publishing
+
+#### Requirements
+
+##### Sonatype login
+For publishing a sonatype login is required. 
+Credential details can be put in a file called `~/.sbt/0.13/sonatype.sbt` in the format
+```text
+credentials += Credentials("Sonatype Nexus Repository Manager",
+        "oss.sonatype.org",
+        "<username>",
+        "<password>")
+```
+
+##### GPG key
+The sbt-gpg plugin uses the gpg commandline tool. On a Mac this can be installed and configured with the following commands:
+```bash
+brew install gnupg gnupg2
+gpg --gen-key
+gpg --list-keys
+gpg --keyserver hkp://pgp.mit.edu --send-keys <KEY-UUID>
+```
+
+#### Publishing a SNAPSHOT version
+
+```bash
+export GPG_TTY=$(tty)
+sbt publishSigned
+```
+
+
+#### Publishing a RELEASE version
+
+After changing the version in build.sbt to a non snapshot version number
+
+```bash
+export GPG_TTY=$(tty)
+sbt publishSigned
+sbt sonatypeRelease
+```
