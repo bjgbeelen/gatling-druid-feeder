@@ -16,7 +16,8 @@
  */
 package com.godatadriven.gatling.feeder.druid
 
-import io.gatling.core.feeder.RecordSeqFeederBuilder
+import io.gatling.core.config.GatlingConfiguration
+import io.gatling.core.feeder.{InMemoryFeederSource, SourceFeederBuilder}
 
 object Predef {
 
@@ -26,8 +27,8 @@ object Predef {
     * @tparam T type of the elements that the feeder considers the values
     * @return
     */
-  def druidFeeder[T](feeder: Seq[Map[String, T]]) : RecordSeqFeederBuilder[T] =
-    RecordSeqFeederBuilder[T](feeder.toIndexedSeq)
+  def druidFeeder[T](feeder: Seq[Map[String, T]])(implicit configuration: GatlingConfiguration) : SourceFeederBuilder[T] =
+    SourceFeederBuilder[T](InMemoryFeederSource(feeder.toIndexedSeq), configuration)
 }
 
 
